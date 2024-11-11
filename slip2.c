@@ -23,7 +23,7 @@ if (stat(filename, &file_info) == -1) {
  printf("Number of Hard Links: %ld\n", (long)file_info.st_nlink);
  printf("File Permissions: %o\n", file_info.st_mode & 0777);
  printf("File Size: %ld bytes\n", (long)file_info.st_size);
- // Convert access and modification times to a human-readable format
+ 
  char access_time_str[20];
  char mod_time_str[20];
  strftime(access_time_str, sizeof(access_time_str), "%Y-%m-%d %H:%M:%S", 

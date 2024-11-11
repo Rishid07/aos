@@ -7,18 +7,18 @@
 #include <sys/wait.h>
 
 int main() {
-    int fd[2];  // Array to store the file descriptors for the pipe
+    int fd[2];  
     pid_t pid;
     char write_msg[] = "Hello from parent!";
     char read_msg[100];
 
-    // Create an unnamed pipe
+   
     if (pipe(fd) == -1) {
         perror("pipe");
         exit(1);
     }
 
-    // Fork a child process
+    
     pid = fork();
     if (pid < 0) {
         perror("fork");
@@ -26,49 +26,43 @@ int main() {
     }
 
     if (pid > 0) {
-        // Parent process
-
-        // Close the unused read end of the pipe
+        
         close(fd[0]);
 
-        // Write to the pipe
+        
         printf("Parent: Writing to pipe\n");
         write(fd[1], write_msg, strlen(write_msg) + 1);
 
-        // Close the write end of the pipe after writing
+        
         close(fd[1]);
 
-        // Wait for the child to finish
+        
         wait(NULL);
 
-        // Open the read end of the pipe to read the message from child
-        // In this example, we're assuming the child writes something to the pipe
-        // (the child writes "Hello from child!")
-        close(fd[1]);  // Close the write end in parent
+        
+        close(fd[1]);  
         read(fd[0], read_msg, sizeof(read_msg));
         printf("Parent: Read from pipe: %s\n", read_msg);
 
-        // Close the read end of the pipe
+        
         close(fd[0]);
     } 
     else {
-        // Child process
-
-        // Close the unused write end of the pipe
+        
         close(fd[1]);
 
-        // Read the message from parent
+        
         read(fd[0], read_msg, sizeof(read_msg));
         printf("Child: Read from pipe: %s\n", read_msg);
 
-        // Close the read end after reading
+       
         close(fd[0]);
 
-        // Open the write end of the pipe to write a message back to the parent
-        close(fd[0]);  // Ensure the read end is closed
+        
+        close(fd[0]);  
         write(fd[1], "Hello from child!", strlen("Hello from child!") + 1);
         
-        // Close the write end after writing
+        
         close(fd[1]);
     }
 

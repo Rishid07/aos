@@ -22,10 +22,10 @@ int main(int argc, char *argv[]) {
         struct stat file_info;
         if (stat(argv[i], &file_info) == -1) {
             perror("stat");
-            continue; // Skip the file if stat() fails
+            continue; 
         }
         printf("File: %s\nInode: %ld\n", argv[i], (long)file_info.st_ino);
-        print_file_type(file_info.st_mode); // Print file type
+        print_file_type(file_info.st_mode); 
         printf("---------------\n");
     }
     return 0;
@@ -47,7 +47,7 @@ pid_t child_pid = -1;
 
 void handle_child_death(int sig) {
     int status;
-    pid_t pid = waitpid(child_pid, &status, WNOHANG);  // Non-blocking wait
+    pid_t pid = waitpid(child_pid, &status, WNOHANG);  
     if (pid == -1) {
         perror("waitpid");
         exit(1);
@@ -66,7 +66,7 @@ void handle_child_death(int sig) {
 void handle_alarm(int sig) {
     if (child_pid > 0) {
         printf("Timeout reached! Killing child process %d...\n", child_pid);
-        kill(child_pid, SIGKILL);  // Kill the child process after 5 seconds
+        kill(child_pid, SIGKILL);  
     }
 }
 
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    // Set up signal handlers
+    
     struct sigaction sa_child, sa_alarm;
     memset(&sa_child, 0, sizeof(sa_child));
     sa_child.sa_handler = handle_child_death;
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
     sa_alarm.sa_handler = handle_alarm;
     sigaction(SIGALRM, &sa_alarm, NULL);
 
-    // Fork a child process
+    
     child_pid = fork();
     if (child_pid < 0) {
         perror("fork");
@@ -94,21 +94,19 @@ int main(int argc, char *argv[]) {
     }
 
     if (child_pid == 0) {
-        // Child process
+        
         printf("Child process started with PID %d. Executing command...\n", getpid());
-        execvp(argv[1], &argv[1]);  // Execute the user-defined program
-        // If execvp fails
+        execvp(argv[1], &argv[1]);  
+       
         perror("execvp");
         exit(1);
     } else {
-        // Parent process
+        
         printf("Parent process waiting for child process...\n");
 
-        // Set an alarm to go off in 5 seconds
+        
         alarm(5);
-
-        // Wait for the child process to complete or be killed
-        pause();  // Parent waits for a signal (either child death or alarm)
+        pause();  
     }
 
     return 0;
