@@ -11,16 +11,16 @@ int main() {
  struct stat fileStat;
  char path[1000];
  unsigned long long n;
- // Prompt the user for the minimum file size
+ 
  printf("Enter the minimum file size (in bytes): ");
  scanf("%llu", &n);
- // Open the current directory
+ 
  dir = opendir(".");
  if (dir == NULL) {
  perror("opendir");
  return 1;
  }
-// Iterate through the directory entries
+
  while ((entry = readdir(dir)) != NULL) {
  snprintf(path, sizeof(path), "%s", entry->d_name);
  if (stat(path, &fileStat) < 0) {
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    // Set up signal handlers
+    
     struct sigaction sa_child, sa_alarm;
     memset(&sa_child, 0, sizeof(sa_child));
     sa_child.sa_handler = handle_child_death;
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
     sa_alarm.sa_handler = handle_alarm;
     sigaction(SIGALRM, &sa_alarm, NULL);
 
-    // Fork a child process
+    
     child_pid = fork();
     if (child_pid < 0) {
         perror("fork");
@@ -97,21 +97,21 @@ int main(int argc, char *argv[]) {
     }
 
     if (child_pid == 0) {
-        // Child process
+        
         printf("Child process started with PID %d. Executing command...\n", getpid());
-        execvp(argv[1], &argv[1]);  // Execute the user-defined program
-        // If execvp fails
+        execvp(argv[1], &argv[1]);  
+        
         perror("execvp");
         exit(1);
     } else {
-        // Parent process
+        
         printf("Parent process waiting for child process...\n");
 
-        // Set an alarm to go off in 5 seconds
+        
         alarm(5);
 
-        // Wait for the child process to complete or be killed
-        pause();  // Parent waits for a signal (either child death or alarm)
+        
+        pause();  
     }
 
     return 0;

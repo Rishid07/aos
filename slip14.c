@@ -11,16 +11,16 @@ int main() {
  struct stat fileStat;
  char path[1000];
  unsigned long long n;
- // Prompt the user for the minimum file size
+ 
  printf("Enter the minimum file size (in bytes): ");
  scanf("%llu", &n);
- // Open the current directory
+ 
  dir = opendir(".");
  if (dir == NULL) {
  perror("opendir");
  return 1;
  }
-// Iterate through the directory entries
+
  while ((entry = readdir(dir)) != NULL) {
  snprintf(path, sizeof(path), "%s", entry->d_name);
  if (stat(path, &fileStat) < 0) {
@@ -60,7 +60,7 @@ if (stat(filename, &file_info) == -1) {
  printf("Number of Hard Links: %ld\n", (long)file_info.st_nlink);
  printf("File Permissions: %o\n", file_info.st_mode & 0777);
  printf("File Size: %ld bytes\n", (long)file_info.st_size);
- // Convert access and modification times to a human-readable format
+ 
  char access_time_str[20];
  char mod_time_str[20];
  strftime(access_time_str, sizeof(access_time_str), "%Y-%m-%d %H:%M:%S", 

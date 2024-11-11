@@ -7,23 +7,23 @@
 void print_and_set_limit(int resource, long long new_limit) {
     struct rlimit limits;
 
-    // Get the current limit
+    
     if (getrlimit(resource, &limits) == -1) {
         perror("getrlimit");
         exit(EXIT_FAILURE);
     }
 
-    // Print the current limit
+    
     printf("Current limit: %lld bytes\n", (long long)limits.rlim_cur);
 
-    // Set the new limit
+    
     limits.rlim_cur = new_limit;
     if (setrlimit(resource, &limits) == -1) {
         perror("setrlimit");
         exit(EXIT_FAILURE);
     }
 
-    // Get and print the updated limit
+    
     if (getrlimit(resource, &limits) == -1) {
         perror("getrlimit");
         exit(EXIT_FAILURE);
@@ -32,13 +32,13 @@ void print_and_set_limit(int resource, long long new_limit) {
 }
 
 int main() {
-    // File descriptor limit (RLIMIT_NOFILE)
+    
     print_and_set_limit(RLIMIT_NOFILE, 1024);
 
-    // Virtual memory limit (RLIMIT_AS) - 1 GB
+    
     print_and_set_limit(RLIMIT_AS, 1024 * 1024 * 1024);
 
-    // Stack size limit (RLIMIT_STACK) - 8 MB
+    
     print_and_set_limit(RLIMIT_STACK, 8 * 1024 * 1024);
 
     return 0;

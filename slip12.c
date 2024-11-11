@@ -41,12 +41,12 @@ exit_status);
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-// Custom data structure to store filename and file size
+
 struct FileInfo {
 char *filename;
 off_t size;
 };
-// Custom comparison function for sorting FileInfo structures
+
 int compareFileInfo(const void *a, const void *b) {
 return ((struct FileInfo*)a)->size - ((struct FileInfo*)b)->size;
 }int main(int argc, char *argv[]) {
@@ -54,14 +54,14 @@ if (argc < 2) {
 fprintf(stderr, "Usage: %s <file1> <file2> ...\n", argv[0]);
 return 1;
 }
-// Create an array of FileInfo structures to store filename and size
+
 struct FileInfo *fileInfoArray = (struct FileInfo*)malloc((argc - 1) * sizeof(struct
 FileInfo));
 if (!fileInfoArray) {
 perror("malloc");
 return 1;
 }
-// Fill the array with filenames and their corresponding sizes
+
 for (int i = 1; i < argc; i++) {
 struct stat fileStat;
 if (stat(argv[i], &fileStat) == -1) {
@@ -71,14 +71,14 @@ return 1;
 fileInfoArray[i - 1].filename = argv[i];
 fileInfoArray[i - 1].size = fileStat.st_size;
 }
-// Sort the FileInfo array in ascending order of file sizes
+
 qsort(fileInfoArray, argc - 1, sizeof(struct FileInfo), compareFileInfo);
-// Display the filenames in ascending order of sizes
+
 printf("Filenames in ascending order according to their sizes:\n");
 for (int i = 0; i < argc - 1; i++) {
 printf("%s - %ld bytes\n", fileInfoArray[i].filename, fileInfoArray[i].size);
 }
-// Clean up and free memory
+
 free(fileInfoArray);
 return 0;
 }
