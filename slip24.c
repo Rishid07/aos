@@ -1,39 +1,36 @@
-//1)Display all the files from current directory whose size is greater that n Bytes Where n is accept
-//from user. 
+//1) Take multiple files as command Line argument and print their inode numbers and file types
 
 #include <stdio.h>
-#include <dirent.h>
+#include <stdlib.h>
 #include <sys/stat.h>
-#include <string.h>
-int main() {
- DIR *dir;
- struct dirent *entry;
- struct stat fileStat;
- char path[1000];
- unsigned long long n;
- // Prompt the user for the minimum file size
- printf("Enter the minimum file size (in bytes): ");
- scanf("%llu", &n);
- // Open the current directory
- dir = opendir(".");
- if (dir == NULL) {
- perror("opendir");
- return 1;
- }
-// Iterate through the directory entries
- while ((entry = readdir(dir)) != NULL) {
- snprintf(path, sizeof(path), "%s", entry->d_name);
- if (stat(path, &fileStat) < 0) {
- perror("stat");
- continue;
- }
- if (S_ISREG(fileStat.st_mode) && fileStat.st_size > n) {
- printf("%s (%llu bytes)\n", path, fileStat.st_size);
- }
- }
- closedir(dir);
- return 0;
+void print_file_type(mode_t mode) {
+    if (S_ISREG(mode)) printf("Type: Regular File\n");
+    else if (S_ISDIR(mode)) printf("Type: Directory\n");
+    else if (S_ISLNK(mode)) printf("Type: Symbolic Link\n");
+    else if (S_ISCHR(mode)) printf("Type: Character Device\n");
+    else if (S_ISBLK(mode)) printf("Type: Block Device\n");
+    else if (S_ISFIFO(mode)) printf("Type: FIFO (Named Pipe)\n");
+    else if (S_ISSOCK(mode)) printf("Type: Socket\n");
+    else printf("Type: Unknown\n");
 }
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <file1> <file2> ... <fileN>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    for (int i = 1; i < argc; i++) {
+        struct stat file_info;
+        if (stat(argv[i], &file_info) == -1) {
+            perror("stat");
+            continue; // Skip the file if stat() fails
+        }
+        printf("File: %s\nInode: %ld\n", argv[i], (long)file_info.st_ino);
+        print_file_type(file_info.st_mode); // Print file type
+        printf("---------------\n");
+    }
+    return 0;
+}
+
 
 //2)Write a C program which creates a child process to run linux/ unix command or any user defined
 //program. The parent process set the signal handler for death of child signal and Alarm signal. If
@@ -116,4 +113,5 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
 
